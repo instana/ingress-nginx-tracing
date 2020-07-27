@@ -1,23 +1,19 @@
 # Instana tracing for Ingress NGINX
 
-We build an Instana init container which provides the NGINX tracing binaries,
-an empty tracer configuration, and a patched NGINX configuration template.
+We build an Instana init container which provides the NGINX tracing binaries, an empty tracer configuration, and a patched NGINX configuration template.
 
-The Instana tracing files are registered in the NGINX configuration template
-and the environment variables used to configure the Instana tracer are whitelisted.
+The Instana tracing files are registered in the NGINX configuration template and the environment variables used to configure the Instana tracer are whitelisted.
 
-## Build
+## Build Init Container
 
 Build the Instana init container in [`./instana/init-container`](./instana/init-container):
 
 ```sh
 INGRESS_NGINX_PATH=/tmp/ingress-nginx
-git clone https://github.com/kubernetes/ingress-nginx "${INGRESS_NGINX_PATH}"; \
-pushd "${INGRESS_NGINX_PATH}"; \
-git checkout ingress-nginx-2.11.1; \
-popd; \
+[ -d "${INGRESS_NGINX_PATH}" ] || git clone https://github.com/kubernetes/ingress-nginx "${INGRESS_NGINX_PATH}"; \
+(cd "${INGRESS_NGINX_PATH}"; git checkout ingress-nginx-2.11.1); \
 ./init-container/get_nginx_template.sh "${INGRESS_NGINX_PATH}"; \
-./init-container/patch_nginx_template.sh; \
+./init-container/patch_nginx_template.sh;
 docker build -t instana-nginx-init ./init-container \
     --build-arg nginx_version='1.19.1' \
     --build-arg download_key=<DOWNLOAD_KEY>
@@ -27,52 +23,26 @@ Tag and upload to your Docker registry accessible by Kubernetes:
 
 ```sh
 export DOCKER_REGISTRY=<DOCKER_REGISTRY>; \
-docker tag instana-nginx-init:latest ${DOCKER_REGISTRY}:5000/instana-nginx-init:latest; \
-docker push ${DOCKER_REGISTRY}:5000/instana-nginx-init:latest
+docker tag instana-nginx-init:latest ${DOCKER_REGISTRY}:5000/instana-nginx-init:2.11.1; \
+docker push ${DOCKER_REGISTRY}:5000/instana-nginx-init:2.11.1
 ```
 
 ## Deploy Ingress NGINX with Instana settings
 
-TODO: Set env vars to configure the tracer.
+### Helm 2
 
-### Helm chart
+<TODO>
 
-```yaml
-# ingress-nginx-instana.yaml
-controller:
-
-    config: {enable-opentracing: "true"}
-
-    extraVolumes:
-      - name: instana-tracing-dependencies
-        emptyDir: {}
-      - name: instana-nginx-template
-        emptyDir: {}
-
-    extraVolumeMounts:
-      - name: instana-tracing-dependencies
-        mountPath: /instana/nginx
-      - name: instana-nginx-template
-        mountPath: /etc/nginx/template
-
-    extraInitContainers:
-      - name: instana-tracing-dependencies
-        image: <DOCKER_REGISTRY>:5000/instana-nginx-init:latest
-        volumeMounts:
-          - name: instana-tracing-dependencies
-            mountPath: /instana/nginx
-          - name: instana-nginx-template
-            mountPath: /etc/nginx/template
-```
-
-Patch the helm chart with your Docker registry name/IP:
+### Helm 3
 
 ```sh
-sed -i s@'<DOCKER_REGISTRY>'@${DOCKER_REGISTRY}@g helm/ingress-nginx-instana.yaml
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx --values=helm/ingress-nginx-instana.yaml
 ```
 
-Install your chart with helm:
+### Additional settings
 
-```sh
-helm install --name my-release --values helm/ingress-nginx-instana.yaml ${INGRESS_NGINX_PATH}/charts/ingress-nginx/
-```
+Additional settings can be specified via the following environment variables:
+
+<TODO>

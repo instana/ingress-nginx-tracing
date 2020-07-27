@@ -1,29 +1,29 @@
 # ingress-nginx-instana.yaml
 controller:
 
-    config: {enable-opentracing: "true"}
+  config: { enable-opentracing: "true" }
 
-    #    extraEnvs:
-    #      - name: INSTANA_DEV
-    #        value: 1
+#  extraEnvs:
+#  - name: INSTANA_DEV
+#    value: 1
 
-    extraVolumes:
-      - name: instana-tracing-dependencies
-        emptyDir: {}
-      - name: instana-nginx-template
-        emptyDir: {}
+  extraVolumes:
+    - name: instana-tracing-dependencies
+      emptyDir: {}
+    - name: instana-nginx-template
+      emptyDir: {}
 
-    extraVolumeMounts:
-      - name: instana-tracing-dependencies
-        mountPath: /instana/nginx
-      - name: instana-nginx-template
-        mountPath: /etc/nginx/template
+  extraVolumeMounts:
+    - name: instana-tracing-dependencies
+      mountPath: /instana/nginx
+    - name: instana-nginx-template
+      mountPath: /etc/nginx/template
 
-    extraInitContainers:
-      - name: instana-tracing-dependencies
-        image: <DOCKER_REGISTRY>:5000/instana-nginx-init:latest
-        volumeMounts:
-          - name: instana-tracing-dependencies
-            mountPath: /instana/nginx
-          - name: instana-nginx-template
-            mountPath: /etc/nginx/template
+  extraInitContainers:
+    - name: instana-tracing-dependencies
+      image: instana-nginx-init:2.11.1
+      volumeMounts:
+        - name: instana-tracing-dependencies
+          mountPath: /instana/nginx
+        - name: instana-nginx-template
+          mountPath: /etc/nginx/template
