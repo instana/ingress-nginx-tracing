@@ -1,0 +1,13 @@
+[nginx-0.30.0]
+repo=https://github.com/kubernetes/ingress-nginx
+tag=nginx-0.30.0
+docker_image=quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.30.0
+libc_flavor=musl
+nginx_version=nginx/1.17.8
+
+[nginx-0.25.1-rancher1]
+repo=https://github.com/rancher/ingress-nginx
+tag=nginx-0.25.1-rancher1
+docker_image=rancher/nginx-ingress-controller:nginx-0.25.1-rancher1
+libc_flavor=glibc
+nginx_version=openresty/1.15.8.1
