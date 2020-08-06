@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -19,3 +19,5 @@ case "${NGINX_VERSION}" in
   exit 0
   ;;
 esac
+
+# vim: set tabstop=2 softtabstop=2 shiftwidth=2 expandtab :

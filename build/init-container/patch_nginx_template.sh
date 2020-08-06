@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #set -x
 
@@ -35,3 +35,5 @@ if [[ $RC1 -eq 1 || $RC2 -eq 1 || $RC3 -eq 1 ]]; then
   echo "ERROR: Adding Instana config to ${INPUT} as ${OUTPUT} failed." >&2
   exit 1
 fi
+
+# vim: set tabstop=2 softtabstop=2 shiftwidth=2 expandtab :
