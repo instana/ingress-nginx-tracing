@@ -8,6 +8,20 @@ cd "${CWD}"
 source "scripts/ini-parsing.sh"
 
 TMPL_PATH="rootfs/etc/nginx/template/nginx.tmpl"
+BUILD_SUCCESS=0
+IMAGE="instana-nginx-init"
+
+clean_up() {
+    set +e
+    if [ ${BUILD_SUCCESS} -ne 1 ]; then
+        for cfg in ${CFG_FUNCTIONS[*]}; do
+            ${cfg}
+            docker rmi "${IMAGE}:${tag}" 2>/dev/null
+        done
+    fi
+    set -e
+}
+trap clean_up EXIT
 
 get_and_patch_nginx_template() {
     rm -f init-container/nginx.tmpl
@@ -54,7 +68,7 @@ build_init_container_image() {
     get_and_patch_nginx_template
 
     # Build the init container image
-    docker build -t instana-nginx-init:${tag} ./init-container \
+    docker build -t ${IMAGE}:${tag} ./init-container \
         --build-arg libc_flavor="${libc_flavor}" \
         --build-arg nginx_flavor="${nginx_flavor}" \
         --build-arg nginx_version="${nginx_version}" \
@@ -73,6 +87,7 @@ main() {
     for cfg in ${CFG_FUNCTIONS[*]}; do
         build_init_container_image
     done
+    BUILD_SUCCESS=1
 }
 
 main "$@"
