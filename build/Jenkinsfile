@@ -1,9 +1,12 @@
 #!/usr/bin/env groovy
 
+// The following line is patched by get_current_release.sh
 def releaseNumber = "184"
+def buildOffset = "16"
+
 def buildNumber = "${env.BUILD_NUMBER}"
-def buildOffset = "5"
 def minorVersion = "${buildNumber}".toInteger() - "${buildOffset}".toInteger()
+def releaseString = "1.${releaseNumber}.${minorVersion}"
 
 stage('Checkout') {
   node {
@@ -23,6 +26,6 @@ stage('Build') {
 
 stage('Container upload') {
   node {
-    sh "make upload RELEASE=1.${releaseNumber}.${minorVersion}"
+    sh "make upload RELEASE=${releaseString}"
   }
 }
