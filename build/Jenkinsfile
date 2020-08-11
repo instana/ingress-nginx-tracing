@@ -2,7 +2,7 @@
 
 // The following line is patched by get_current_release.sh
 def releaseNumber = "184"
-def buildOffset = "16"
+def buildOffset = "19"
 
 def buildNumber = "${env.BUILD_NUMBER}"
 def minorVersion = "${buildNumber}".toInteger() - "${buildOffset}".toInteger()
