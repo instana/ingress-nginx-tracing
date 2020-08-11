@@ -11,7 +11,8 @@ OUTPUT="./instana-nginx.tmpl"
 OLD_MODLINE='load_module /etc/nginx/modules/ngx_http_opentracing_module.so;'
 NEW_MODLINE='load_module /instana/nginx/ngx_http_instana_module.so;'
 
-TRACER_LOAD='    {{ if (shouldLoadOpentracingModule $cfg $servers) }}\n    opentracing_load_tracer /instana/nginx/libinstana_sensor.so /instana/nginx/instana-config.json;\n    {{ end }}'
+TRACER_LOAD_CONDITION=$(grep -B1 "${OLD_MODLINE}" ${INPUT} | head -n1 | sed -e s@{@\\\\{@g -e s@}@\\\\}@g -e s@\\\$@\\\\\$@g)
+TRACER_LOAD="    ${TRACER_LOAD_CONDITION}\n    opentracing_load_tracer /instana/nginx/libinstana_sensor.so /instana/nginx/instana-config.json;\n    {{ end }}"
 
 CFG="env INSTANA_AGENT_HOST;\n"
 CFG="${CFG}env INSTANA_AGENT_PORT;\n"
