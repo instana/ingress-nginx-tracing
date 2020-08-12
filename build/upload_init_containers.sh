@@ -10,7 +10,7 @@ force_success() {
 }
 
 set_target_name() {
-    TARGET_NAME="${DOCKER_REGISTRY_INTERNAL}/instana/release/ingress-nginx-init"
+    TARGET_NAME="${DOCKER_REGISTRY_INTERNAL}/instana/release/agent/ingress-nginx-init"
 }
 
 clean_up() {
