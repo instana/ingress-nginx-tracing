@@ -10,7 +10,7 @@ force_success() {
 }
 
 set_target_name() {
-    TARGET_NAME="${DOCKER_REGISTRY_INTERNAL}/instana/prerelease/ingress-nginx/${img_tag}/instana-init"
+    TARGET_NAME="${DOCKER_REGISTRY_INTERNAL}/instana/prerelease/ingress-nginx-init"
 }
 
 clean_up() {
@@ -18,8 +18,8 @@ clean_up() {
     for img_tag in ${IMAGE_TAGS}; do
         set_target_name
         docker rmi "${IMAGE}:${img_tag}" 2>/dev/null
-        docker rmi "${TARGET_NAME}:${RELEASE}" 2>/dev/null
-        docker rmi "${TARGET_NAME}:latest" 2>/dev/null
+        docker rmi "${TARGET_NAME}:${RELEASE}-${img_tag}" 2>/dev/null
+        docker rmi "${TARGET_NAME}:latest-${img_tag}" 2>/dev/null
     done
     set -e
 }
@@ -45,10 +45,10 @@ fi
 set -x
 for img_tag in ${IMAGE_TAGS}; do
     set_target_name
-    docker tag ${IMAGE}:${img_tag} ${TARGET_NAME}:${RELEASE}
-    docker tag ${IMAGE}:${img_tag} ${TARGET_NAME}:latest
-    docker push ${TARGET_NAME}:${RELEASE}
-    docker push ${TARGET_NAME}:latest
+    docker tag ${IMAGE}:${img_tag} ${TARGET_NAME}:${RELEASE}-${img_tag}
+    docker tag ${IMAGE}:${img_tag} ${TARGET_NAME}:latest-${img_tag}
+    docker push ${TARGET_NAME}:${RELEASE}-${img_tag}
+    docker push ${TARGET_NAME}:latest-${img_tag}
 done
 set +x
 
