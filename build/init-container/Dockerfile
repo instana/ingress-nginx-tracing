@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 AS tracing_dependencies
+FROM ubuntu:18.04 AS tracer_downloader
 
 RUN set -x \
     && apt-get update \
@@ -10,8 +10,6 @@ ARG nginx_flavor
 ARG nginx_version
 # Most images are Alpine Linux (musl libc) based. Use "glibc" otherwise.
 ARG libc_flavor=musl
-ARG tracing_dependencies_dir='/instana/nginx'
-ARG nginx_template_dir='/etc/nginx/template'
 
 ENV INSTANA_DOWNLOAD_KEY=${download_key}
 ENV NGINX_FLAVOR=${nginx_flavor}
@@ -19,11 +17,7 @@ ENV NGINX_VERSION=${nginx_version}
 ENV SUFFIX=''
 ENV LIBC_FLAVOR=${libc_flavor}
 ENV ARTI_PATH='https://artifact-public.instana.io/artifactory/shared/com/instana/nginx_tracing/'
-ENV TRACING_DEPENDENCIES_DIR=${tracing_dependencies_dir}
-ENV NGINX_TEMPLATE_DIR=${nginx_template_dir}
 
-ADD instana-nginx.tmpl /opt/instana/nginx/template/nginx.tmpl
-ADD instana-config.json /opt/instana/nginx/instana-config.json
 ADD get_suffix.sh /opt/instana/nginx/get_suffix.sh
 
 # Download extension from Artifactory
@@ -39,6 +33,21 @@ RUN SUFFIX=$(/bin/bash /opt/instana/nginx/get_suffix.sh "${NGINX_FLAVOR}" "${NGI
     mkdir -p /opt/instana/nginx && \
     mv ${LIBC_FLAVOR}-libinstana_sensor.so /opt/instana/nginx/libinstana_sensor.so && \
     mv ${LIBC_FLAVOR}-${NGINX_FLAVOR}-${NGINX_VERSION}-ngx_http_ot_module${SUFFIX}.so /opt/instana/nginx/ngx_http_instana_module.so;
+
+
+# Final image
+FROM debian:buster-slim AS tracing_dependencies
+
+ARG tracing_dependencies_dir='/instana/nginx'
+ARG nginx_template_dir='/etc/nginx/template'
+
+ENV TRACING_DEPENDENCIES_DIR=${tracing_dependencies_dir}
+ENV NGINX_TEMPLATE_DIR=${nginx_template_dir}
+
+ADD instana-nginx.tmpl /opt/instana/nginx/template/nginx.tmpl
+ADD instana-config.json /opt/instana/nginx/instana-config.json
+COPY --from=tracer_downloader /opt/instana/nginx/libinstana_sensor.so /opt/instana/nginx/libinstana_sensor.so
+COPY --from=tracer_downloader /opt/instana/nginx/ngx_http_instana_module.so /opt/instana/nginx/ngx_http_instana_module.so
 
 CMD mv /opt/instana/nginx/libinstana_sensor.so ${TRACING_DEPENDENCIES_DIR}/libinstana_sensor.so && \
     mv /opt/instana/nginx/ngx_http_instana_module.so ${TRACING_DEPENDENCIES_DIR}/ngx_http_instana_module.so && \
