@@ -10,7 +10,7 @@ force_success() {
 }
 
 JENKINS_FILE="./Jenkinsfile"
-JENKINS_URI="https://dev-jenkins.instana.io/job/ingress-nginx-tracing"
+JENKINS_URI="https://agent-jenkins.instana.io/job/ingress-nginx-tracing"
 
 CURR_RELEASE="$(git ls-remote --heads git@github.com:instana/backend.git 2>/dev/null \
     | grep -o "release-[0-9]\+" | cut -d '-' -f2 | sort -n | tail -n1)"
@@ -28,8 +28,8 @@ if [ "${PREV_RELEASE}" != "${CURR_RELEASE}" ]; then
     echo "Updating release in ${JENKINS_FILE}."
     RELEASE_LINE=$(sed "s@${PREV_RELEASE}@${CURR_RELEASE}@g" <<< ${PREV_RELEASE_LINE})
     sed -i "s@${PREV_RELEASE_LINE}@${RELEASE_LINE}@g" ${JENKINS_FILE}
-    echo "Go to ${JENKINS_URI}, get the latest build number," \
-        "and set it in ${JENKINS_FILE} as well."
+    echo "Go to ${JENKINS_URI}, get the next build number," \
+        "and set it in ${JENKINS_FILE} as build offset."
 else
     echo "${CURR_RELEASE} is still latest."
 fi
