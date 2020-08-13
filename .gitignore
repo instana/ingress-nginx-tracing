@@ -1,1 +1,1 @@
-init-container/*.tmpl
+build/init-container/*.tmpl
