@@ -25,7 +25,7 @@ We build the images automatically from the [init container configuration](build/
 
 ## Init Container Pull Secret
 
-The pull secret name `instana-registry-key` is assumed. Please edit the respective yaml files if this does not apply to your setup.
+The pull secret name `instana-registry-key` is assumed in namespace `ingress-nginx`. Please edit the respective yaml files if this does not apply to your setup.
 
 Basics: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 
@@ -47,7 +47,7 @@ We provide a custom values file [helm/ingress-nginx-instana.yaml](helm/ingress-n
 helm init
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
-helm install --name=ingress-nginx ingress-nginx/ingress-nginx --values=helm/ingress-nginx-instana.yaml --version=2.11.1
+helm install --name=ingress-nginx ingress-nginx/ingress-nginx --values=helm/ingress-nginx-instana.yaml --namespace=ingress-nginx --version=2.11.1
 ```
 
 ### Helm 3
@@ -55,7 +55,7 @@ helm install --name=ingress-nginx ingress-nginx/ingress-nginx --values=helm/ingr
 ```sh
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
-helm install ingress-nginx ingress-nginx/ingress-nginx --values=helm/ingress-nginx-instana.yaml --version=2.11.1
+helm install ingress-nginx ingress-nginx/ingress-nginx --values=helm/ingress-nginx-instana.yaml --namespace=ingress-nginx --version=2.11.1
 ```
 
 ### Without helm
