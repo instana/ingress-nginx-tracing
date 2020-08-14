@@ -60,7 +60,20 @@ helm install ingress-nginx ingress-nginx/ingress-nginx --values=helm/ingress-ngi
 
 ### Without helm
 
-<TODO>
+We provide patched versions of the deployment scripts which provide the same modifications like in the helm chart modification.
+
+#### Before 0.31
+
+```sh
+kubectl apply -f deploy/<ingress-nginx-git-tag>/static/mandatory.yaml
+kubectl apply -f deploy/<ingress-nginx-git-tag>/static/provider/cloud-generic.yaml
+```
+
+#### 0.31 and later
+
+```sh
+kubectl apply -f deploy/<ingress-nginx-git-tag>/static/provider/cloud/deploy.yaml
+```
 
 ### Additional settings
 
