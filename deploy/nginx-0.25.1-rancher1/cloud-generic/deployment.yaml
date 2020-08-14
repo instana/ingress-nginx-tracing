@@ -11,9 +11,25 @@ spec:
         prometheus.io/scrape: "true"
     spec:
       serviceAccountName: nginx-ingress-serviceaccount
+      imagePullSecrets:
+        - name: instana-registry-key
+      volumes:
+        - name: instana-tracing-dependencies
+          emptyDir: {}
+        - name: instana-nginx-template
+          emptyDir: {}
+      initContainers:
+        - name: instana-tracing-dependencies
+          image: containers.instana.io/instana/release/agent/ingress-nginx-init:latest-nginx-0.25.1-rancher1
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: instana-tracing-dependencies
+              mountPath: /instana/nginx
+            - name: instana-nginx-template
+              mountPath: /etc/nginx/template
       containers:
         - name: nginx-ingress-controller
-          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.25.0
+          image: rancher/nginx-ingress-controller:nginx-0.25.1-rancher1
           args:
             - /nginx-ingress-controller
             - --configmap=$(POD_NAMESPACE)/$(NGINX_CONFIGMAP_NAME)
@@ -39,6 +55,23 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: INSTANA_SERVICE_NAME
+              value: "ingress-nginx-demo"
+            - name: INSTANA_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: INSTANA_AGENT_PORT
+              value: "42699"
+            - name: INSTANA_MAX_BUFFERED_SPANS
+              value: "1000"
+#            - name: INSTANA_DEV
+#              value: "1"
+          volumeMounts:
+            - name: instana-tracing-dependencies
+              mountPath: /instana/nginx
+            - name: instana-nginx-template
+              mountPath: /etc/nginx/template
           ports:
             - name: http
               containerPort: 80
