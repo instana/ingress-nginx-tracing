@@ -72,7 +72,8 @@ build_init_container_image() {
         --build-arg libc_flavor="${libc_flavor}" \
         --build-arg nginx_flavor="${nginx_flavor}" \
         --build-arg nginx_version="${nginx_version}" \
-        --build-arg download_key="${INSTANA_DOWNLOAD_KEY}"
+        --build-arg download_key="${INSTANA_DOWNLOAD_KEY}" \
+        --build-arg tag="${tag}"
 }
 
 main() {

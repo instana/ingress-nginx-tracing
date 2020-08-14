@@ -6,12 +6,14 @@ RUN set -x \
 
 ARG download_key
 ARG agent_key
+ARG tag
 ARG nginx_flavor
 ARG nginx_version
 # Most images are Alpine Linux (musl libc) based. Use "glibc" otherwise.
 ARG libc_flavor=musl
 
 ENV INSTANA_DOWNLOAD_KEY=${download_key}
+ENV TAG=${tag}
 ENV NGINX_FLAVOR=${nginx_flavor}
 ENV NGINX_VERSION=${nginx_version}
 ENV SUFFIX=''
@@ -21,7 +23,7 @@ ENV ARTI_PATH='https://artifact-public.instana.io/artifactory/shared/com/instana
 ADD get_suffix.sh /opt/instana/nginx/get_suffix.sh
 
 # Download extension from Artifactory
-RUN SUFFIX=$(/bin/bash /opt/instana/nginx/get_suffix.sh "${NGINX_FLAVOR}" "${NGINX_VERSION}"); \
+RUN SUFFIX=$(/bin/bash /opt/instana/nginx/get_suffix.sh "${NGINX_FLAVOR}" "${NGINX_VERSION}" "${TAG}"); \
     echo "Using download key ${INSTANA_DOWNLOAD_KEY}; NGINX version: ${NGINX_FLAVOR}/${NGINX_VERSION}; LIBC flavor: ${LIBC_FLAVOR}; suffix: \"${SUFFIX}\""; \
     NGINX_VERSION=$(echo ${NGINX_VERSION} | egrep -o '^[0-9]+\.[0-9]+\.[0-9]+'); \
     sensor_version=$(lynx -auth _:${INSTANA_DOWNLOAD_KEY} -dump -listonly ${ARTI_PATH} | grep -o 'https:.*/[0-9]\+\.[0-9]\+\.[0-9]\+/' | rev | cut -d '/' -f 2 | rev | sort -V | tail -n1); \
