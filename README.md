@@ -1,4 +1,4 @@
-# Instana tracing for Ingress NGINX
+# Instana Tracing for Kubernetes NGINX Ingress
 
 We build an Instana init container which provides the NGINX tracing binaries, an empty tracer configuration, and a patched NGINX configuration template.
 
@@ -6,7 +6,7 @@ The Instana tracing files are registered in the NGINX configuration template and
 
 ## Disclaimer
 
-*Instana Ingress NGINX tracing is currently a technology preview.*
+*Instana tracing for Kubernetes NGINX Ingress is currently a technology preview.*
 
 We reserve ourselves the right to make it better and easier before releasing the functionality for General Availability.
 
@@ -42,9 +42,9 @@ sed -i "s@<YOUR_BASE64_ENCODED_FILE_CONTENTS_HERE>@$(cat ~/.docker/config.json |
 kubectl apply -f deploy/instana-secret.yaml
 ```
 
-## Deploy Ingress NGINX with Instana settings
+## Deploy Kubernetes NGINX Ingress with Instana Settings
 
-Helm charts are provided since ingress-nginx version 0.31. Version `ingress-nginx-2.11.1` is assumed as an example.
+Helm charts are provided since Kubernetes NGINX Ingress version 0.31. Version `ingress-nginx-2.11.1` is assumed as an example.
 We provide a custom values file [helm/ingress-nginx-instana.yaml](helm/ingress-nginx-instana.yaml). Adapt it to your needs.
 
 ### Helm 3
