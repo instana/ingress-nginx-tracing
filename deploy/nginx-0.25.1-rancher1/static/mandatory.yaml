@@ -18,6 +18,16 @@ metadata:
     app.kubernetes.io/part-of: ingress-nginx
 data:
   enable-opentracing: "true"
+  http-snippet: |
+    server {
+      listen 18080;
+      location /nginx_status {
+        stub_status on;
+      }
+      location / {
+        return 404;
+      }
+    }
 
 ---
 kind: ConfigMap

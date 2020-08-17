@@ -11,5 +11,15 @@ data:
   use-forwarded-headers: "true"
   proxy-real-ip-cidr: "0.0.0.0/0" # restrict this to the IP addresses of ELB
   enable-opentracing: "true"
+  http-snippet: |
+    server {
+      listen 18080;
+      location /nginx_status {
+        stub_status on;
+      }
+      location / {
+        return 404;
+      }
+    }
 ---
 
