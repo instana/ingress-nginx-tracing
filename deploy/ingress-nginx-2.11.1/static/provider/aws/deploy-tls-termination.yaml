@@ -41,6 +41,15 @@ data:
       listen 2443;
       return 308 https://$host$request_uri;
     }
+    server {
+      listen 18080;
+      location /nginx_status {
+        stub_status on;
+      }
+      location / {
+        return 404;
+      }
+    }
   proxy-real-ip-cidr: XXX.XXX.XXX/XX
   use-forwarded-headers: 'true'
   enable-opentracing: "true"

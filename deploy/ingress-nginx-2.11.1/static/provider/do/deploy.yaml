@@ -38,6 +38,16 @@ metadata:
 data:
   use-proxy-protocol: 'true'
   enable-opentracing: "true"
+  http-snippet: |
+    server {
+      listen 18080;
+      location /nginx_status {
+        stub_status on;
+      }
+      location / {
+        return 404;
+      }
+    }
 ---
 # Source: ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
