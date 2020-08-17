@@ -5,7 +5,17 @@ imagePullSecrets:
 
 controller:
 
-  config: { enable-opentracing: "true" }
+  config: { enable-opentracing: "true", http-snippet: "
+    server {
+      listen 18080;
+      location /nginx_status {
+        stub_status on;
+      }
+      location / {
+        return 404;
+      }
+    }"
+  }
 
   extraEnvs:
     - name: INSTANA_SERVICE_NAME
