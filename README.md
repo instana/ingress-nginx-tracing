@@ -4,6 +4,12 @@ We build an Instana init container which provides the NGINX tracing binaries, an
 
 The Instana tracing files are registered in the NGINX configuration template and the environment variables used to configure the Instana tracer are whitelisted.
 
+## Disclaimer
+
+*Instana Ingress NGINX tracing is currently a technology preview.*
+
+We reserve ourselves the right to make it better and easier before releasing the functionality for General Availability.
+
 ## Init Container Images
 
 | Release | Sensor Version | Changes |
