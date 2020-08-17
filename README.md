@@ -47,6 +47,14 @@ kubectl apply -f deploy/instana-secret.yaml
 Helm charts are provided since ingress-nginx version 0.31. Version `ingress-nginx-2.11.1` is assumed as an example.
 We provide a custom values file [helm/ingress-nginx-instana.yaml](helm/ingress-nginx-instana.yaml). Adapt it to your needs.
 
+### Helm 3
+
+```sh
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx --values=helm/ingress-nginx-instana.yaml --namespace=ingress-nginx --version=2.11.1
+```
+
 ### Helm 2
 
 ```sh
@@ -54,14 +62,6 @@ helm init
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 helm install --name=ingress-nginx ingress-nginx/ingress-nginx --values=helm/ingress-nginx-instana.yaml --namespace=ingress-nginx --version=2.11.1
-```
-
-### Helm 3
-
-```sh
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-helm install ingress-nginx ingress-nginx/ingress-nginx --values=helm/ingress-nginx-instana.yaml --namespace=ingress-nginx --version=2.11.1
 ```
 
 ### Without helm
