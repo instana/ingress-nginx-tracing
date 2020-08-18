@@ -25,7 +25,7 @@ See [Sensor release history](https://github.com/instana/nginx-tracing#release-hi
 
 Image: `containers.instana.io/instana/release/agent/ingress-nginx-init`
 
-Tag names are composed of `<release>-<ingress-nginx-git-tag>`.
+Tag names are composed of `<release>-<ingress_nginx_git_tag>`.
 
 Tags:
 * `latest-ingress-nginx-2.11.1`, `latest-nginx-0.30.0`, `latest-nginx-0.25.1-rancher1`
@@ -70,19 +70,53 @@ helm install --name=ingress-nginx ingress-nginx/ingress-nginx --values=helm/ingr
 
 ### Without helm
 
-We provide patched versions of the deployment scripts which provide the same modifications like in the helm chart modification.
+We provide patched versions of the deployment YAML files which provide the same modifications like for the helm chart.
 
 #### Before 0.31
 
 ```sh
-kubectl apply -f deploy/<ingress-nginx-git-tag>/static/mandatory.yaml
-kubectl apply -f deploy/<ingress-nginx-git-tag>/static/provider/cloud-generic.yaml
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/mandatory.yaml
+```
+
+Then select one of these depending on your cloud/loadbalancer setup:
+```sh
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/cloud-generic.yaml
+```
+```sh
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/aws/service-nlb.yaml
+```
+```sh
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/aws/service-l4.yaml
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/aws/patch-configmap-l4.yaml
+```
+```sh
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/aws/service-l7.yaml
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/aws/patch-configmap-l7.yaml
+```
+```sh
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/baremetal/service-nodeport.yaml
 ```
 
 #### 0.31 and later
 
+Select one of these depending on your cloud/loadbalancer setup:
 ```sh
-kubectl apply -f deploy/<ingress-nginx-git-tag>/static/provider/cloud/deploy.yaml
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/cloud/deploy.yaml
+```
+```sh
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/aws/deploy.yaml
+```
+```sh
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/aws/deploy-tls-termination.yaml
+```
+```sh
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/do/deploy.yaml
+```
+```sh
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/kind/deploy.yaml
+```
+```sh
+kubectl apply -f deploy/${ingress_nginx_git_tag}/static/provider/baremetal/deploy.yaml
 ```
 
 ### Additional settings
