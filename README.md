@@ -1,9 +1,12 @@
 # Instana Tracing for Kubernetes NGINX Ingress
 
-We build an Instana init container which provides the NGINX tracing binaries, an empty tracer configuration, and a patched NGINX configuration template.
-The Instana tracing files are registered in the NGINX configuration template and the environment variables used to configure the Instana tracer are whitelisted.
+Instana provides YAML files to easily deploy [Kubernetes NGINX Ingress](https://github.com/kubernetes/ingress-nginx) with Instana tracing and metrics collection.
 
-We provide YAML files to easily deploy Kubernetes NGINX Ingress with Instana tracing and metrics collection.
+## Implementation Details
+
+An Instana init container is built which provides the NGINX tracing binaries, an empty tracer configuration, and a patched NGINX configuration template.
+The Instana tracing files are registered in the NGINX configuration template and the environment variables used to configure the Instana tracer are whitelisted.
+This differs a bit from the [official Kubernetes NGINX Ingress OpenTracing documentation](https://kubernetes.github.io/ingress-nginx/user-guide/third-party-addons/opentracing/).
 
 ## Disclaimer
 
