@@ -42,6 +42,7 @@ data:
       listen 18080;
       location /nginx_status {
         stub_status on;
+        access_log  off;
       }
       location / {
         return 404;
