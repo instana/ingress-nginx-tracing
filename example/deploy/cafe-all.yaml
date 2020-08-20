@@ -26,10 +26,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        - name: INSTANA_AGENT_PORT
-          value: "42699"
-        - name: INSTANA_MAX_BUFFERED_SPANS
-          value: "1000"
+#        - name: INSTANA_AGENT_PORT
+#          value: "42699"
+#        - name: INSTANA_MAX_BUFFERED_SPANS
+#          value: "1000"
 #        - name: INSTANA_DEV
 #          value: "1"
         ports:
@@ -77,10 +77,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        - name: INSTANA_AGENT_PORT
-          value: "42699"
-        - name: INSTANA_MAX_BUFFERED_SPANS
-          value: "1000"
+#        - name: INSTANA_AGENT_PORT
+#          value: "42699"
+#        - name: INSTANA_MAX_BUFFERED_SPANS
+#          value: "1000"
 #        - name: INSTANA_DEV
 #          value: "1"
         ports:
