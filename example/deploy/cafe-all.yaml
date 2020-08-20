@@ -117,6 +117,7 @@ metadata:
   name: cafe-ingress
   namespace: ingress-nginx-demo
   annotations: {
+    # These are only required for NGINX Inc. NGINX Ingress.
     nginx.org/server-snippets: opentracing_propagate_context;,
     nginx.org/location-snippets: opentracing_propagate_context;
   }

@@ -128,3 +128,7 @@ Additional settings can be specified via the following environment variables:
 * `INSTANA_AGENT_PORT`
 * `INSTANA_MAX_BUFFERED_SPANS`
 * `INSTANA_DEV`
+
+### Complete example
+
+See [example/README.md](example/README.md) for a complete example.
