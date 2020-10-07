@@ -1,0 +1,78 @@
+---
+
+resources:
+
+  - name: ingress-nginx-tracing-repository
+    type: git
+    icon: github
+    source: &ingress-nginx-tracing-repo-config
+      uri: https://github.com/instana/ingress-nginx-tracing.git
+      username: ((project-berlin-gh-token))
+      password: x-oauth-basic
+      branch: &ingress-nginx-build-branch main
+
+  - name: pipeline-source
+    type: git
+    icon: github
+    source:
+      <<: *ingress-nginx-tracing-repo-config
+      paths:
+      - ci/
+
+  - name: ingress-nginx-repository
+    type: git
+    icon: github
+    source: &ingress-nginx-tracing-repo-config
+      uri: https://github.com/kubernetes/ingress-nginx.git
+      username: ((project-berlin-gh-token))
+      password: x-oauth-basic
+
+  - name: ingress-nginx-releases
+    type: github-release
+    icon: github
+    source:
+      owner: kubernetes
+      repository: ingress-nginx
+      access_token: ((project-berlin-gh-token))
+      release: true
+      pre_release: false
+      tag_filter: controller-v(.*)
+
+jobs:
+
+  - name: self-update
+    plan:
+      - get: pipeline-source
+        trigger: true
+      - set_pipeline: self
+        file: pipeline-source/ci/pipeline.yml
+        vars:
+          branch: *ingress-nginx-build-branch
+          project-berlin-gh-token: ((project-berlin-gh-token))
+
+  - name: create-pr-for-new-controller-release
+    plan:
+      - in_parallel:
+        - get: ingress-nginx-releases
+          trigger: true
+        - get: ingress-nginx-repository
+        - get: ingress-nginx-tracing-repository
+      - task: create-new-branch
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: openjdk
+              tag: slim-buster
+          inputs:
+            - name: ingress-nginx-repository
+            - name: ingress-nginx-tracing-repository
+            - name: ingress-nginx-releases
+          params:
+            GITHUB_TOKEN: ((project-berlin-gh-token))
+          run:
+            path: /bin/bash
+            args:
+              - -exc
+              - ingress-nginx-tracing-repository/ci/scripts/prepare-build-branch
