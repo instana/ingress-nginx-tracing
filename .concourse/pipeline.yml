@@ -17,7 +17,7 @@ resources:
     source:
       <<: *ingress-nginx-tracing-repo-config
       paths:
-      - ci/
+      - .concourse/
 
   - name: ingress-nginx-repository
     type: git
@@ -45,7 +45,7 @@ jobs:
       - get: pipeline-source
         trigger: true
       - set_pipeline: self
-        file: pipeline-source/ci/pipeline.yml
+        file: pipeline-source/.concourse/pipeline.yml
         vars:
           branch: *ingress-nginx-build-branch
           project-berlin-gh-token: ((project-berlin-gh-token))
@@ -75,4 +75,4 @@ jobs:
             path: /bin/bash
             args:
               - -exc
-              - ingress-nginx-tracing-repository/ci/scripts/prepare-build-branch
+              - ingress-nginx-tracing-repository/.concourse/scripts/prepare-build-branch
