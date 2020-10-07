@@ -1,0 +1,69 @@
+###
+### Build new tracers for ingress-nginx controllers on Circle CI
+###
+
+version: 2.1
+
+parameters:
+  controller-image:
+    type: string
+
+orbs:
+  docker: circleci/docker@1.4.0
+  shellcheck: circleci/shellcheck@2.0.0
+  github-release: h-matsuo/github-release@0.1.1
+
+workflows:
+
+  # This workflow will create a new GitHub draft release with the tracer and other files.
+  # The draft release will be picked up in Concourse by the https://ci.instana.io/teams/agent/pipelines/autotrace-mutating-webhook
+  # pipeline and validated. When the validation passes, the draft release will be promoted
+  # to an actual release and the tracer will be integrated in Project Berlin.
+  new-ingress-nginx-controller-tracer:
+    jobs:
+    - extract-nginx-build-params:
+        filters:
+          branches:
+            ignore: /.*/
+
+jobs:
+
+  extract-nginx-build-params:
+    docker:
+    - image: docker:17.05.0-ce-git
+    steps:
+    - run:
+        name: Echo controller image
+        command: |
+          echo "Preparing tracer for controller image << pipeline.parameters.controller-image >>"
+    - setup_remote_docker
+    - run:
+        name: Extract controller data
+        command: |
+          mkdir workspace/artifacts
+
+          docker pull '<< pipeline.parameters.controller-image >>''
+
+          # For whatever reason, 'nginx -v' outputs to the stderr
+          docker run $(cat workspace/controller_image) /bin/sh -c 'nginx -v 2>&1' > workspace/artifacts/nginx_version
+          echo "NGINX version: $(cat workspace/controller_data/nginx_version)"
+
+          docker run $(cat workspace/controller_image) /bin/sh -c 'nginx -V 2>&1 | grep \'configure arguments\' | awk -F \': \' \'{ print $2 }\'' > workspace/artifacts/nginx_build_flags
+          echo "NGINX build flags: $(cat workspace/controller_data/configure_arguments)"
+
+          docker run $(cat workspace/controller_image) /bin/sh -c 'ldd 2>&1 || true' > workspace/artifacts/ldd_output
+          echo "LDD output: $(cat workspace/controller_data/ldd_output)"
+
+          docker run $(cat workspace/controller_image) /bin/sh -c 'cat /etc/nginx/template/nginx.tmpl' > workspace/artifacts/nginx.tmpl
+    - run:
+        name: Publish artifacts
+        command: |
+          cp -R workspace/artifacts .
+    - store_artifacts:
+        path: artifacts
+    - github-release/create:
+        tag: << pipeline.parameters.controller-image >>
+        title: Ingress NGINX Controller << pipeline.parameters.controller-image >>
+        draft: true
+        description: Build artifacts for the NGINX tracer to trace << pipeline.parameters.controller-image >> Ingress NGINX controller images.
+        file-path: ./artifacts/*
