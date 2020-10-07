@@ -50,7 +50,7 @@ jobs:
           branch: *ingress-nginx-build-branch
           project-berlin-gh-token: ((project-berlin-gh-token))
 
-  - name: create-pr-for-new-controller-release
+  - name: create-branch-for-new-controller-release
     plan:
       - in_parallel:
         - get: ingress-nginx-releases
